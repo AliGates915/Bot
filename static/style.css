@@ -1,0 +1,136 @@
+/* All CSS that used to be in inject_css() */
+body {
+  background: #fff;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 980px;
+  margin: 18px auto;
+  padding: 12px;
+}
+
+.header {
+  padding: 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+.header p {
+  font-size: 14px;
+  color: #555;
+  margin-top: 6px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.left {
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 10px;
+  min-height: 300px;
+  border: 1px solid #eee;
+}
+
+.right {
+  background: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* ✅ Buttons fixed to light gray */
+.start-btn,
+.action-btn {
+  width: 100%;
+  height: 44px;
+  background: #d3d3d3 !important;  /* Light Gray */
+  color: #000 !important;           /* Black text */
+  border-radius: 8px;
+  border: none !important;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.start-btn:hover,
+.action-btn:hover {
+  background: #b0b0b0 !important;  /* Darker Gray on hover */
+}
+
+.category-list {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.category-list div {
+  padding: 6px 4px;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.item-row h4 {
+  margin: 0;
+  font-size: 15px;
+}
+.qty-input {
+  width: 64px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.cart-line {
+  margin: 6px 0;
+  font-size: 14px;
+}
+.cart-total {
+  font-weight: 700;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.small-muted {
+  color: #666;
+  font-size: 13px;
+}
+
+/* ✅ Messages also gray */
+#messages {
+  color: #555 !important;  /* Gray messages */
+  font-size: 14px;
+}
+.payment-options {
+  display: flex;
+  gap: 16px; /* thoda space buttons ke beech */
+  align-items: center;
+  flex-wrap: wrap; /* agar mobile me jagah kam ho to neeche aa jaye */
+}
+
+.payment-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* radio aur text ke beech */
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap; /* ek line me rakhta hai */
+}
+

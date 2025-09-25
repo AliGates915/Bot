@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Taaza Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+    }
+
+    /* Floating Chatbot */
+    .chatbot-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chatbot-header {
+      background: #4CAF50;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .chatbot-body {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .chatbot-body h4 {
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    .chatbot-body input,
+    .chatbot-body select,
+    .chatbot-body textarea,
+    .chatbot-body button {
+      width: 100%;
+      margin-top: 6px;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .chatbot-body button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .chatbot-body button:hover {
+      background: #43a047;
+    }
+
+    .small-muted {
+      font-size: 12px;
+      color: gray;
+    }
+
+    .cart-total {
+      font-weight: bold;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Chatbot -->
+  <div class="chatbot-box">
+    <div class="chatbot-header"> Taaza Chatbot</div>
+    <div class="chatbot-body">
+
+      <!-- Step UI -->
+      <div id="form-area">
+        <h4>Enter Your Details</h4>
+        <div>
+          <label>Country Code</label>
+          <select id="country_code">
+            <option value="+92">+92</option>
+            <option value="+91">+91</option>
+            <option value="+971">+971</option>
+            <option value="+44">+44</option>
+            <option value="+1">+1</option>
+          </select>
+        </div>
+        <div>
+          <label>Mobile (e.g. 3001234567)</label>
+          <input type="text" id="mobile" placeholder="3001234567" />
+          <div id="mobile-error" class="small-muted" style="color:red"></div>
+        </div>
+        <div>
+          <label>Name</label>
+          <input type="text" id="name" />
+        </div>
+        <div>
+          <label>Address</label>
+          <textarea id="address" rows="2"></textarea>
+        </div>
+        <div style="margin-top:10px;">
+          <button id="start-btn">💾 Save & Start Chat</button>
+        </div>
+      </div>
+
+      <!-- Shopping area -->
+      <div id="shopping-area" style="display:none;">
+        <div id="user-info" style="margin-bottom:12px;"></div>
+
+        <div id="categories">
+          <h4>🛒 Categories</h4>
+          <div id="category-list" class="category-list"></div>
+
+          <div style="margin-top:8px;">
+            <label>Enter category number to open</label>
+            <input type="number" id="cat-number" min="1" />
+            <button id="open-cat" style="margin-top:6px;">✅ Open Category</button>
+          </div>
+        </div>
+
+        <div id="items-area" style="margin-top:12px;"></div>
+
+        <div style="margin-top:12px;">
+          <button id="back-to-cats" style="display:none; margin-top:8px;">🔙 Back to Categories</button>
+        </div>
+      </div>
+
+      <!-- Cart area -->
+      <div id="cart-area" style="display:none; margin-top:12px;">
+        <h4>🛒 Your Cart</h4>
+        <div id="cart-user" class="small-muted" style="margin-bottom:8px;"></div>
+        <div id="cart-lines"></div>
+        <div id="cart-total" class="cart-total"></div>
+        <div style="margin-top:12px;">
+          <button id="checkout-btn">💳 Checkout</button>
+        </div>
+
+       <div id="checkout-area" style="display:none; margin-top:12px;">
+  <h4>Confirm Payment</h4>
+  <div class="payment-options">
+    <label>
+      <input type="radio" name="payment" value="Cash on Delivery" id="pm-cash" checked />
+      💵 Cash on Delivery
+    </label>
+    <label>
+      <input type="radio" name="payment" value="Online Transfer" id="pm-online" />
+      💳 Online Transfer
+    </label>
+  </div>
+  <div style="margin-top:8px;">
+    <button id="confirm-order">✅ Confirm Order</button>
+  </div>
+</div>
+
+
+        <div id="messages" style="margin-top:12px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

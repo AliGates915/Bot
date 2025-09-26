@@ -1,5 +1,4 @@
 /* Frontend JS: talks to FastAPI backend via fetch() */
-/* Frontend JS: talks to FastAPI backend via fetch() */
 let sessionId = null;
 let categories = [];
 let selectedCategory = null;
@@ -59,23 +58,19 @@ async function loadItems(category){
       return;
     }
 
-    // ✅ sari items ek sath render karo
     items.forEach(it => {
       const row = document.createElement("div");
       row.className = "item-row";
 
-      // unique id
       const id = it._id || it.id || it.itemName;
 
       if(selectedItemId === id){
-        // agar ye item select hua hai → qty + add button dikhao
         row.innerHTML = `
           <h4>${it.itemName} - ${it.price ? it.price + " Rs" : "N/A"}</h4>
           <input class="qty-input" type="number" min="1" max="100" value="1" id="qty_${id}">
           <button class="action-btn" onclick='addToCart(${JSON.stringify(it)})'>🛒 Add to Cart</button>
         `;
       }else{
-        // normally sirf naam + price
         row.innerHTML = `
           <h4 style="cursor:pointer;" onclick="selectItem('${id}')">${it.itemName} - ${it.price ? it.price + " Rs" : "N/A"}</h4>
         `;
@@ -89,10 +84,9 @@ async function loadItems(category){
   }
 }
 
-// ✅ jab user kisi item pe click kare
 function selectItem(id){
   selectedItemId = id;
-  loadItems(selectedCategory); // dubara render karo taki sirf is item pe qty + add aaye
+  loadItems(selectedCategory);
 }
 
 async function addToCart(it){
@@ -109,7 +103,7 @@ async function addToCart(it){
     const data = await res.json();
     renderCart(data.cart);
     show(`✅ ${it.itemName} added to cart!`);
-    selectedItemId = null; // reset after adding
+    selectedItemId = null;
     loadItems(selectedCategory);
   }catch(e){
     show("Failed to add to cart: " + e);
@@ -147,8 +141,8 @@ function renderCart(cart){
 async function startSession(){
   const country = el("country_code").value || "+92";
   const mobile = el("mobile").value.trim();
-  const name = el("name").value.trim();      // ✅ fixed
-  const address = el("address").value.trim(); // ✅ fixed
+  const name = el("name").value.trim();
+  const address = el("address").value.trim();
 
   if(!/^\d+$/.test(mobile)){ el("mobile-error").innerText = "Mobile must contain only digits."; return; }
   if(!mobile.startsWith("3")){ el("mobile-error").innerText = "Mobile must start with 3."; return; }
@@ -176,18 +170,6 @@ async function startSession(){
   }
 }
 
-async function viewCartNow(){
-  if(!sessionId) return;
-  try{
-    const r = await fetch(`/cart/view?session_id=${sessionId}`);
-    if(!r.ok) throw await r.text();
-    const d = await r.json();
-    renderCart(d.cart || []);
-  }catch(e){
-    show("Could not fetch cart: " + e);
-  }
-}
-
 async function openCheckout(){ el("checkout-area").style.display = "block"; }
 
 async function confirmOrder(){
@@ -200,7 +182,7 @@ async function confirmOrder(){
       body: JSON.stringify({ session_id: sessionId, paymentMethod: pm })
     });
     if(!res.ok){ const t = await res.text(); throw t; }
-    const r = await res.json();
+    await res.json();
     show("✅ Order placed successfully.");
     renderCart([]);
     el("checkout-area").style.display = "none";
@@ -209,15 +191,27 @@ async function confirmOrder(){
   }
 }
 
+/* === DOM Ready Handlers === */
 document.addEventListener("DOMContentLoaded", function(){
-  el("start-btn").onclick = startSession;
-  el("open-cat").onclick = openCategoryByNumber;
-  el("back-to-cats").onclick = function(){
+  console.log("✅ Chatbot JS loaded");
+
+  const startConvoBtn = document.getElementById("start-convo");
+  if (startConvoBtn) {
+    startConvoBtn.addEventListener("click", function(){
+      console.log("👉 New Conversation clicked");
+      document.getElementById("welcome-area").style.display = "none";
+      document.getElementById("form-area").style.display = "block";
+    });
+  }
+
+  if (el("start-btn")) el("start-btn").onclick = startSession;
+  if (el("open-cat")) el("open-cat").onclick = openCategoryByNumber;
+  if (el("back-to-cats")) el("back-to-cats").onclick = function(){
     selectedCategory = null;
     selectedItemId = null;
     el("items-area").innerHTML = "";
     el("back-to-cats").style.display = "none";
   };
-  el("checkout-btn").onclick = openCheckout;
-  el("confirm-order").onclick = confirmOrder;
+  if (el("checkout-btn")) el("checkout-btn").onclick = openCheckout;
+  if (el("confirm-order")) el("confirm-order").onclick = confirmOrder;
 });

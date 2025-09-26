@@ -4,12 +4,7 @@
   <meta charset="utf-8" />
   <title>Taaza Chatbot</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-    }
-
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; }
     /* Floating Chatbot */
     .chatbot-box {
       position: fixed;
@@ -23,71 +18,56 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      z-index: 9999;
     }
+    .chatbot-header { background: #4CAF50; color: white; padding: 12px; text-align: center; font-weight: bold; }
+    #welcome-area { text-align: center; padding: 20px; color: #fff; background: #000; border-radius: 12px; }
+    #welcome-area h4 { margin: 0; font-size: 18px; }
+    #welcome-area p { margin: 6px 0; font-size: 14px; }
+    .chatbot-body { flex: 1; padding: 12px; overflow-y: auto; font-size: 14px; }
+    .chatbot-body h4 { margin-top: 10px; margin-bottom: 6px; }
+    .chatbot-body input, .chatbot-body select, .chatbot-body textarea, .chatbot-body button {
+      width: 100%; margin-top: 6px; padding: 8px; font-size: 14px; border-radius: 6px; border: 1px solid #ccc;
+    }
+    row.innerHTML = `
+  <h4 style="cursor:pointer; display:flex; align-items:center;" onclick="selectItem('${id}')">
+    ➡️ <span style="margin-left:6px;">${it.itemName} - ${it.price ? it.price + " Rs" : "N/A"}</span>
+  </h4>
+`;
 
-    .chatbot-header {
-      background: #4CAF50;
-      color: white;
-      padding: 12px;
-      text-align: center;
-      font-weight: bold;
     }
-
-    .chatbot-body {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-      font-size: 14px;
-    }
-
-    .chatbot-body h4 {
-      margin-top: 10px;
-      margin-bottom: 6px;
-    }
-
-    .chatbot-body input,
-    .chatbot-body select,
-    .chatbot-body textarea,
-    .chatbot-body button {
-      width: 100%;
-      margin-top: 6px;
-      padding: 8px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .chatbot-body button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    .chatbot-body button:hover {
-      background: #43a047;
-    }
-
-    .small-muted {
-      font-size: 12px;
-      color: gray;
-    }
-
-    .cart-total {
-      font-weight: bold;
-      margin-top: 8px;
-    }
+    .start-btn:hover, .action-btn:hover { background: #b0b0b0; }
+    .small-muted { font-size: 12px; color: gray; }
+    .category-list { font-size: 15px; margin-bottom: 8px; }
+    .item-row { display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px dashed #eee; }
+    .item-row h4 { margin: 0; font-size: 15px; }
+    .qty-input { width: 64px; padding: 6px; border-radius: 6px; border: 1px solid #ddd; }
+    .cart-line { margin: 6px 0; font-size: 14px; }
+    .cart-total { font-weight: 700; margin-top: 8px; font-size: 16px; }
+    .payment-options { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+    .payment-options label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; }
+    #messages { color:#555; font-size:14px; margin-top:12px; }
   </style>
 </head>
 <body>
 
-  <!-- Floating Chatbot -->
   <div class="chatbot-box">
-    <div class="chatbot-header"> Taaza Chatbot</div>
+    <div class="chatbot-header">Taaza Chatbot</div>
     <div class="chatbot-body">
 
-      <!-- Step UI -->
-      <div id="form-area">
+      <!-- Welcome -->
+      <div id="welcome-area">
+        <h4>Assalam u Aliqum</h4>
+        <p><b>This is Taaza Chatbot</b></p>
+        <p>Kindly provide the following information to start chatting with the next available agent</p>
+        <div style="margin-top:12px; text-align:center;">
+          <button id="start-convo" class="start-btn" type="button">New Conversation</button>
+          <p class="small-muted">We typically reply in a few minutes</p>
+        </div>
+      </div>
+
+      <!-- Form (hidden initially) -->
+      <div id="form-area" style="display:none;">
         <h4>Enter Your Details</h4>
         <div>
           <label>Country Code</label>
@@ -113,11 +93,11 @@
           <textarea id="address" rows="2"></textarea>
         </div>
         <div style="margin-top:10px;">
-          <button id="start-btn">💾 Save & Start Chat</button>
+          <button id="start-btn" class="start-btn" type="button">💾 Save & Start Chat</button>
         </div>
       </div>
 
-      <!-- Shopping area -->
+      <!-- Shopping (hidden) -->
       <div id="shopping-area" style="display:none;">
         <div id="user-info" style="margin-bottom:12px;"></div>
 
@@ -128,51 +108,357 @@
           <div style="margin-top:8px;">
             <label>Enter category number to open</label>
             <input type="number" id="cat-number" min="1" />
-            <button id="open-cat" style="margin-top:6px;">✅ Open Category</button>
+            <button id="open-cat" class="start-btn" type="button" style="margin-top:6px;">✅ Open Category</button>
           </div>
         </div>
 
         <div id="items-area" style="margin-top:12px;"></div>
 
         <div style="margin-top:12px;">
-          <button id="back-to-cats" style="display:none; margin-top:8px;">🔙 Back to Categories</button>
+          <button id="back-to-cats" class="start-btn" type="button" style="display:none; margin-top:8px;">🔙 Back to Categories</button>
         </div>
       </div>
 
-      <!-- Cart area -->
+      <!-- Cart area (hidden) -->
       <div id="cart-area" style="display:none; margin-top:12px;">
         <h4>🛒 Your Cart</h4>
         <div id="cart-user" class="small-muted" style="margin-bottom:8px;"></div>
         <div id="cart-lines"></div>
         <div id="cart-total" class="cart-total"></div>
         <div style="margin-top:12px;">
-          <button id="checkout-btn">💳 Checkout</button>
+          <button id="checkout-btn" class="start-btn" type="button">💳 Checkout</button>
         </div>
 
-       <div id="checkout-area" style="display:none; margin-top:12px;">
-  <h4>Confirm Payment</h4>
-  <div class="payment-options">
-    <label>
-      <input type="radio" name="payment" value="Cash on Delivery" id="pm-cash" checked />
-      💵 Cash on Delivery
-    </label>
-    <label>
-      <input type="radio" name="payment" value="Online Transfer" id="pm-online" />
-      💳 Online Transfer
-    </label>
-  </div>
-  <div style="margin-top:8px;">
-    <button id="confirm-order">✅ Confirm Order</button>
-  </div>
-</div>
+        <div id="checkout-area" style="display:none; margin-top:12px;">
+          <h4>Confirm Payment</h4>
+          <div class="payment-options">
+            <label><input type="radio" name="payment" value="Cash on Delivery" id="pm-cash" checked /> 💵 Cash on Delivery</label>
+            <label><input type="radio" name="payment" value="Online Transfer" id="pm-online" /> 💳 Online Transfer</label>
+          </div>
+          <div style="margin-top:8px;">
+            <button id="confirm-order" class="start-btn" type="button">✅ Confirm Order</button>
+          </div>
+        </div>
 
-
-        <div id="messages" style="margin-top:12px;"></div>
+        <div id="messages"></div>
       </div>
 
     </div>
   </div>
 
-  <script src="/static/script.js"></script>
+  <!-- Inline Script: robust event binding + logs -->
+  <script>
+    console.log("✅ Chatbot HTML+JS loaded");
+
+    // simple helpers + state
+    function el(id){ return document.getElementById(id); }
+    function show(msg){ const m = el('messages'); if(m) m.innerText = msg; }
+    let sessionId = null, categories = [], selectedCategory = null, selectedItemId = null;
+
+    // fetch categories (called after session created)
+    async function fetchCategories(){
+      show("Loading categories...");
+      try {
+        const res = await fetch('/categories');
+        if(!res.ok) throw await res.text();
+        categories = await res.json();
+        renderCategoryList();
+        show("");
+      } catch(err) {
+        show("Failed to load categories: " + err);
+      }
+    }
+
+    function renderCategoryList(){
+      const list = el("category-list");
+      list.innerHTML = "";
+      if(!Array.isArray(categories) || categories.length === 0){
+        list.innerText = "No categories available.";
+        return;
+      }
+      categories.forEach((c, idx) => {
+        const name = c.categoryName || c.name || c;
+        const div = document.createElement('div');
+        div.innerText = `${idx+1}. ${name}`;
+        list.appendChild(div);
+      });
+    }
+
+    async function openCategoryByNumber(){
+      const n = parseInt(el("cat-number").value || "0");
+      if(!n || n < 1 || n > categories.length){ alert("Invalid category number"); return; }
+      selectedCategory = categories[n-1].categoryName || categories[n-1].name || categories[n-1];
+      await loadItems(selectedCategory);
+      el("back-to-cats").style.display = "inline-block";
+    }
+
+    // safe id generator for DOM ids
+    function safeIdFor(item){
+      // prefer _id or id, else use name with non-word replaced
+      const base = item._id || item.id || item.itemName || JSON.stringify(item);
+      return String(base).replace(/[^\w\-]/g, "_").slice(0, 40);
+    }
+
+    async function loadItems(category){
+      const itemsArea = el("items-area");
+      itemsArea.innerHTML = "";
+      const h = document.createElement('h4');
+      h.textContent = `📦 Items in ${category}`;
+      itemsArea.appendChild(h);
+
+      try {
+        const res = await fetch(`/items/${encodeURIComponent(category)}`);
+        if(!res.ok){
+          const txt = await res.text();
+          const div = document.createElement('div');
+          div.className = "small-muted";
+          div.textContent = "Failed to load items: " + txt;
+          itemsArea.appendChild(div);
+          return;
+        }
+        const items = await res.json();
+        if(!Array.isArray(items) || items.length === 0){
+          const div = document.createElement('div');
+          div.className = "small-muted";
+          div.textContent = "No items found in " + category;
+          itemsArea.appendChild(div);
+          return;
+        }
+
+        // render items (use event listeners, avoid inline JSON-in-HTML)
+        items.forEach(it => {
+          const row = document.createElement('div');
+          row.className = "item-row";
+
+          const id = safeIdFor(it);
+const nameEl = document.createElement('h4');
+nameEl.style.cursor = "pointer";
+nameEl.style.display = "flex";
+nameEl.style.alignItems = "center";
+
+// arrow icon
+const arrow = document.createElement('span');
+arrow.textContent = "➡️";
+arrow.style.marginRight = "6px";
+nameEl.appendChild(arrow);
+
+// text span
+const textSpan = document.createElement('span');
+textSpan.textContent = `${it.itemName} - ${it.price ? it.price + " Rs" : "N/A"}`;
+nameEl.appendChild(textSpan);
+
+// click event
+nameEl.addEventListener('click', () => {
+  selectedItemId = id;
+  loadItems(category); // re-render to show qty+add for selected item
+});
+
+row.appendChild(nameEl);
+
+
+          if(selectedItemId === id){
+            // qty input
+            const qtyWrap = document.createElement('div');
+            const qtyInput = document.createElement('input');
+            qtyInput.className = "qty-input";
+            qtyInput.type = "number";
+            qtyInput.min = "1";
+            qtyInput.max = "100";
+            qtyInput.value = "1";
+            qtyInput.id = `qty_${id}`;
+            qtyWrap.appendChild(qtyInput);
+            row.appendChild(qtyWrap);
+
+            // add button
+            const btnWrap = document.createElement('div');
+            const addBtn = document.createElement('button');
+            addBtn.className = "action-btn";
+            addBtn.type = "button";
+            addBtn.textContent = "🛒 Add to Cart";
+            addBtn.addEventListener('click', () => addToCart(it));
+            btnWrap.appendChild(addBtn);
+            row.appendChild(btnWrap);
+          } else {
+            // placeholder columns to keep layout consistent
+            const empty1 = document.createElement('div'); empty1.innerHTML = "&nbsp;";
+            const empty2 = document.createElement('div'); empty2.innerHTML = "&nbsp;";
+            row.appendChild(empty1); row.appendChild(empty2);
+          }
+
+          itemsArea.appendChild(row);
+        });
+
+      } catch(e){
+        const div = document.createElement('div');
+        div.className = "small-muted";
+        div.textContent = "Error: " + e;
+        itemsArea.appendChild(div);
+      }
+    }
+
+    // add to cart
+    async function addToCart(it){
+      if(!sessionId){ alert("Session not started"); return; }
+      const id = safeIdFor(it);
+      const qel = el(`qty_${id}`);
+      const qty = parseInt(qel ? qel.value : 1);
+      const payload = { session_id: sessionId, itemName: it.itemName, price: it.price || 0, qty: qty };
+      try {
+        const res = await fetch("/cart/add", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok) {
+          const t = await res.text();
+          throw t;
+        }
+        const data = await res.json();
+        renderCart(data.cart || []);
+        show(`✅ ${it.itemName} added to cart!`);
+        selectedItemId = null;
+        loadItems(selectedCategory);
+      } catch(err){
+        show("Failed to add to cart: " + err);
+      }
+    }
+
+    function renderCart(cart){
+      const lines = el("cart-lines");
+      lines.innerHTML = "";
+      let total = 0, totalItems = 0;
+      (cart || []).forEach(it => {
+        const div = document.createElement('div');
+        div.className = "cart-line";
+        div.textContent = `${it.name} × ${it.qty} = ${it.subtotal} Rs`;
+        lines.appendChild(div);
+        total += it.subtotal || 0;
+        totalItems += it.qty || 0;
+      });
+      el("cart-total").innerText = `💰 Total: ${total} Rs`;
+      if((cart || []).length > 0){
+        el("cart-area").style.display = "block";
+      }
+      if(sessionId){
+        fetch(`/cart/view?session_id=${sessionId}`).then(r=>r.json()).then(data=>{
+          const uname = (data.user && data.user.name) || "User";
+          el("cart-user").innerText = `👤 ${uname} | 📦 ${totalItems} items\n🏠 ${(data.user && data.user.address) || ""}`;
+        }).catch(()=>{});
+      }
+    }
+
+    // start session (Save & Start Chat)
+    async function startSession(){
+      console.log("👉 Save & Start Chat clicked (startSession)");
+      const country = el("country_code").value || "+92";
+      const mobile = el("mobile").value.trim();
+      const name = el("name").value.trim();
+      const address = el("address").value.trim();
+
+      if(!/^\d+$/.test(mobile)){ el("mobile-error").innerText = "Mobile must contain only digits."; return; }
+      if(!mobile.startsWith("3")){ el("mobile-error").innerText = "Mobile must start with 3."; return; }
+      if(mobile.length !== 10){ el("mobile-error").innerText = "Mobile must be 10 digits."; return; }
+      el("mobile-error").innerText = "";
+
+      const payload = { name, mobile, address, country_code: country };
+      try {
+        const res = await fetch("/session/create", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok){ const t = await res.text(); throw t; }
+        const data = await res.json();
+        sessionId = data.session_id;
+        // update UI
+        el("form-area").style.display = "none";
+        el("shopping-area").style.display = "block";
+        el("cart-area").style.display = "block";
+        el("user-info").innerHTML = `<b>${data.user.name}</b> • ${data.user.address}`;
+        // now fetch categories
+        fetchCategories();
+        renderCart([]);
+      } catch(err){
+        alert("Failed to create session: " + err);
+      }
+    }
+
+    async function viewCartNow(){
+      if(!sessionId) return;
+      try {
+        const r = await fetch(`/cart/view?session_id=${sessionId}`);
+        if(!r.ok) throw await r.text();
+        const d = await r.json();
+        renderCart(d.cart || []);
+      } catch(e) {
+        show("Could not fetch cart: " + e);
+      }
+    }
+
+    function openCheckout(){ el("checkout-area").style.display = "block"; }
+
+    async function confirmOrder(){
+      if(!sessionId){ alert("No session"); return; }
+      const pm = document.querySelector('input[name="payment"]:checked').value;
+      try {
+        const res = await fetch("/checkout", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ session_id: sessionId, paymentMethod: pm })
+        });
+        if(!res.ok){ const t = await res.text(); throw t; }
+        await res.json();
+        show("✅ Order placed successfully.");
+        renderCart([]);
+        el("checkout-area").style.display = "none";
+      } catch(e){
+        show("Checkout failed: " + e);
+      }
+    }
+
+    // bind handlers on DOM ready
+    document.addEventListener("DOMContentLoaded", function(){
+      console.log("📌 DOM ready");
+      const startConvoBtn = el("start-convo");
+      const startBtn = el("start-btn");
+      const openCatBtn = el("open-cat");
+      const backToCats = el("back-to-cats");
+      const checkoutBtn = el("checkout-btn");
+      const confirmOrderBtn = el("confirm-order");
+
+      if(startConvoBtn){
+        console.log("✅ Found start-convo button");
+        startConvoBtn.addEventListener("click", function(){
+          console.log("👉 New Conversation clicked");
+          el("welcome-area").style.display = "none";
+          el("form-area").style.display = "block";
+        });
+      } else {
+        console.log("❌ start-convo button NOT found");
+      }
+
+      if(startBtn){
+        startBtn.addEventListener("click", startSession);
+      }
+
+      if(openCatBtn){
+        openCatBtn.addEventListener("click", openCategoryByNumber);
+      }
+      if(backToCats){
+        backToCats.addEventListener("click", function(){
+          selectedCategory = null; selectedItemId = null;
+          el("items-area").innerHTML = "";
+          backToCats.style.display = "none";
+        });
+      }
+      if(checkoutBtn) checkoutBtn.addEventListener("click", openCheckout);
+      if(confirmOrderBtn) confirmOrderBtn.addEventListener("click", confirmOrder);
+
+      // quick debug: show that script is ready
+      console.log("✅ Chatbot handlers bound");
+    });
+  </script>
+<script src="/static/script.js"></script>
+
 </body>
 </html>
